@@ -17,9 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from unitconv import views
 
+
+app_name = 'unitconv'
 urlpatterns = [
     path('admin/', admin.site.urls),
     # /unitconv/convert?from=[str]&to=[str]&value=[number]
     path('convert', views.convert, name="convert"),
+    path('', views.index, name='index'),
 
 ]
