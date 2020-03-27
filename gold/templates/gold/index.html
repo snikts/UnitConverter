@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Convert</title>
+    </head>
+    <body onload="go_fetchGold()">
+        <input type="number" id="value" name = "value">
+        <select id="from" name = "from">
+            <option value = "T">T</option>
+            <option value = "g">G</option>
+            <option value = "t_oz">t_oz</option>
+            <option value = "kg">kg</option>
+            <option value = "lb">lb</option>
+            <option value = "oz">oz</option>
+        </select>
+        <button onclick = "go_fetchConversion()" type="button">Get It!</button>
+        <h3 id="result"></h3>
+        <script>
+            var theData;
+            var theData2;
+            var promise0;
+            var promise1;
+            const apiKey = "api_key=PAjsyzzqxwdcXwxXPWWZ";
+            const limit = "limit=1"
+            const column = "column_index=2"
+
+
+            var go_fetchGold = function() {
+                let url = 'https://www.quandl.com/api/v3/datasets/LBMA/GOLD.json?api_key=PAjsyzzqxwdcXwxXPWWZ&limit=1&column_index=2';
+                console.log(url)
+                promise0 = fetch(url);
+                promise1 = promise0.then(responseToJson);
+                promise1.then(presentData);
+
+            }
+
+            var go_fetchConversion = function() {
+                console.log(document.querySelector("#from").value);
+                let fromVal = document.querySelector("#from").value;
+                let valVal = document.querySelector("#value").value;
+                url1 = '/unitconv/convert?from=';
+                fromUrl = url1.concat(fromVal);
+                url2 = '&to=t_oz';
+                halfUrl = fromUrl.concat(url2);
+                url3 = '&value=';
+                valueUrl = url3.concat(valVal);
+                fullUrl = halfUrl.concat(valueUrl);
+                let fibReqUrl = fullUrl;
+                let promiseStreamToJsonCallback = function(response) {
+                    return response.json();
+                }
+                let promiseJsonProcessingCallback = function(json) {
+                    let duration = new Date() - before;
+                    <!--console.log(json);-->
+                    if(json.hasOwnProperty('error')) {
+                        var answer = document.createElement('div');
+                        answer.onclick = function removeDiv() {
+                            answer.remove();
+                        }
+                        answer.style.background = "red";
+                        answer.style.color = "white";
+                        answer.style.fontfamily = 'helvetica neue';
+                        answer.style.letterspacing = '1px';
+                        answer.style.align = "center";
+                        answer.style.padding = "3px 10px";
+                        answer.style.margin = "10px";
+                        answer.style.borderradius = "10px";
+                        answer.style.borderwidth = "2px";
+                        answer.style.borderstyle = 'solid';
+                        resultText = document.createTextNode(document.querySelector('#result').textContent = 'Error: ${json.error}');
+                    }
+                    else {
+                        theData2 = json['value'];
+                        console.log(theData2);
+                        console.log(theData);
+                        var answer = document.createElement('div');
+                        answer.onclick = function removeDiv() {
+                            answer.remove();
+                        }
+                        answer.style.background = "red";
+                        answer.style.color = "white";
+                        answer.style.fontfamily = 'helvetica neue';
+                        answer.style.letterspacing = '1px';
+                        answer.style.align = "center";
+                        answer.style.padding = "3px 10px";
+                        answer.style.margin = "10px";
+                        answer.style.borderradius = "10px";
+                        answer.style.borderwidth = "2px";
+                        answer.style.borderstyle = 'solid';
+                        resultText = document.createTextNode("You are worth " + document.querySelector("#value").value*json['value']*theData + " Dollars!");
+                        answer.appendChild(resultText);
+                        document.body.insertBefore(answer, document.body.childNodes[6]);
+
+
+                    }
+                }
+
+                let before = new Date();
+                let p0 =fetch(fibReqUrl);
+                let p1 = p0.then(promiseStreamToJsonCallback);
+                let p2 = p1.then(promiseJsonProcessingCallback);
+            }
+
+            var responseToJson = function(response) {
+                return response.json();
+            }
+
+            var presentData = function(json) {
+                console.log(json.dataset.data[0][1]);
+                theData = json.dataset.data[0][1];
+                console.log(theData);
+            }
+
+            var formParamsString = function() {
+                let argsArray = Array.from(arguments);
+                let url = argsArray.shift();
+                return `${url}?${argsArray.join('&')}`;
+            }
+
+            var update_url = function(select) {
+                let url = select.value
+                switch(url) {
+                    case "T":
+                    case "g":
+                    case "t_oz":
+                        url = formParamsString('https://www.quandl.com/api/v3/datasets/LBMA/GOLD.json', apiKey, limit, column);
+                        break;
+
+                    case "kg":
+                    case "lb":
+                    case "oz":
+                        url = formParamsString('https://www.quandl.com/api/v3/datasets/LBMA/GOLD.json', apiKey, limit, column);
+                        break;
+
+                    default:
+                    let error = "Whoops! I don't know what to do with the value.";
+                    console.log(error);
+                    alert(error);
+                    url = false;
+                    break;
+
+                }
+
+                if(url) {
+                    for(let span of document.querySelectorAll('.url')) {
+                        span.textContent = url;
+                    }
+                }
+            }
+
+        </script>
+        <!--<script>-->
+            <!--document.onload = update_url(document.querySelector('#value'));-->
+        <!--</script>-->
+    </body>
+</html>
